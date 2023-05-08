@@ -27,7 +27,7 @@ application {
 dependencies {
     implementation 'com.google.cloud:google-cloud-storage:1.113.16'
     implementation 'com.google.auth:google-auth-library-oauth2-http:0.25.5'
-  // Updating to any newer version (e.g. 3.13.22) is causing a regression with normalization. 
+  // Updating to any newer version (e.g. 3.13.22) is causing a regression with normalization.
   // See: https://github.com/airbytehq/airbyte/actions/runs/3078146312
     implementation 'net.snowflake:snowflake-jdbc:3.13.19'
     implementation 'org.apache.commons:commons-csv:1.4'
@@ -53,4 +53,11 @@ dependencies {
 
     implementation files(project(':airbyte-integrations:bases:base-java').airbyteDocker.outputs)
     integrationTestJavaImplementation files(project(':airbyte-integrations:bases:base-normalization').airbyteDocker.outputs)
+}
+
+tasks.named("airbyteDocker") {
+    // this is really inefficent (because base-normalization:airbyteDocker builds 9 docker images)
+    // but it's also just simple to implement.
+    // this also goes away once airbyte-ci becomes a reality.
+    dependsOn project(':airbyte-integrations:bases:base-normalization').airbyteDocker
 }
